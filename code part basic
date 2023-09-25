@@ -1,0 +1,105 @@
+#include <stdio.h>
+#include <stdlib.h>
+#include <string.h>
+
+// Define a structure for a menu item
+struct MenuItem {
+    char name[50];
+    float price;
+};
+
+// Define a structure for an order item
+struct OrderItem {
+    struct MenuItem menu_item;
+    int quantity;
+};
+
+// Function to print the menu
+void printMenu(struct MenuItem menu[], int itemCount) {
+    printf("Canteen Menu:\n");
+    for (int i = 0; i < itemCount; i++) {
+        printf("%d. %s - $%.2f\n", i + 1, menu[i].name, menu[i].price);
+    }
+}
+
+// Function to place an order
+void placeOrder(struct MenuItem menu[], int itemCount, struct OrderItem order[]) {
+    int orderCount = 0;
+    while (1) {
+        printMenu(menu, itemCount);
+        printf("Enter the item number to order (0 to finish): ");
+        int choice;
+        scanf("%d", &choice);
+        if (choice == 0) {
+            break;
+        } else if (choice >= 1 && choice <= itemCount) {
+            int quantity;
+            printf("Enter the quantity of %s: ", menu[choice - 1].name);
+            scanf("%d", &quantity);
+            order[orderCount].menu_item = menu[choice - 1];
+            order[orderCount].quantity = quantity;
+            orderCount++;
+        } else {
+            printf("Invalid item number. Please try again.\n");
+        }
+    }
+}
+
+// Function to print the bill
+void printBill(struct OrderItem order[], int orderCount) {
+    printf("\nYour Bill:\n");
+    float total_price = 0;
+    for (int i = 0; i < orderCount; i++) {
+        float item_total = order[i].menu_item.price * order[i].quantity;
+        printf("%d. %s x%d - $%.2f each = $%.2f\n", i + 1, order[i].menu_item.name, order[i].quantity, order[i].menu_item.price, item_total);
+        total_price += item_total;
+    }
+    printf("Total Price: $%.2f\n", total_price);
+    printf("\nThank you for visiting Sinha's Canteen! See you soon.\n");
+}
+
+int main() {
+    // Define menu items
+    struct MenuItem breakfast_menu[5] = {
+        {"Idli", 4.0},
+        {"Dosa", 5.0},
+        {"Vada", 3.5},
+        {"Litti", 6.0},
+        {"Puri Sabzi", 7.5}
+    };
+
+    struct MenuItem lunch_menu[5] = {
+        {"Veg Thali", 8.0},
+        {"Chicken Thali", 10.0},
+        {"Special Thali", 12.0},
+        {"Naan Veg Meal", 9.0},
+        {"Naan Nonveg Meal", 11.0}
+    };
+
+    struct MenuItem dinner_menu[5] = {
+        {"Veg Biryani", 7.0},
+        {"Chicken Biryani", 9.0},
+        {"Egg Biryani", 8.0},
+        {"Nonveg Thali", 11.0},
+        {"Egg Chicken Roll", 6.5}
+    };
+
+    // Initialize the order
+    struct OrderItem order[20]; // Assuming a maximum of 20 items in the order
+
+    // Take orders
+    printf("Breakfast Order:\n");
+    placeOrder(breakfast_menu, 5, order);
+
+    printf("\nLunch Order:\n");
+    placeOrder(lunch_menu, 5, order);
+
+    printf("\nDinner Order:\n");
+    placeOrder(dinner_menu, 5, order);
+
+    // Print bills
+    printf("\nBill:\n");
+    printBill(order, 20);
+
+    return 0;
+}
